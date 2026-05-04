@@ -1,0 +1,5 @@
+__pycache__/
+*.pyc
+.DS_Store
+forward.log
+.cache_*.json

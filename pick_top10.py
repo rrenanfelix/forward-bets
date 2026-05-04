@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-"""Seleciona até 10 melhores entradas por dia, com filtro de odd + score qualitativo.
+"""Seleciona TODAS as entradas que passam no filtro (odd + EV) por dia.
 
 Marca as escolhidas em forward_bets.json com:
-  is_top10: true
+  is_top10: true        (campo mantido por compat — agora significa "selecionada")
   top10_day: "YYYY-MM-DD"
 
 Entradas já resolvidas (won/lost) são preservadas - não re-seleciona o passado.
@@ -20,7 +20,6 @@ LIMITS = {
     "draw": (4.00, 0.25),
     "away": (3.50, 0.25),
 }
-PER_DAY = 10
 
 
 def passes_filter(b):
@@ -66,18 +65,17 @@ def main():
             continue  # jogos passados sem resolução ainda — não força top10
         by_day[d].append(b)
 
-    # 3) Pra cada dia, ordena por score e marca os top 10
-    print(f"{'Dia':<12s} {'candidatos':>11s} {'selecionados':>13s}")
-    print("-" * 45)
+    # 3) Pra cada dia, marca TODAS que passaram filtro (sem cap)
+    print(f"{'Dia':<12s} {'selecionadas':>13s}")
+    print("-" * 30)
     total_picked = 0
     for d in sorted(by_day):
-        cands = sorted(by_day[d], key=score, reverse=True)
-        chosen = cands[:PER_DAY]
+        chosen = sorted(by_day[d], key=score, reverse=True)
         for b in chosen:
             b["is_top10"] = True
             b["top10_day"] = d
         total_picked += len(chosen)
-        print(f"{d:<12s} {len(cands):>11d} {len(chosen):>13d}")
+        print(f"{d:<12s} {len(chosen):>13d}")
 
     BETS_FILE.write_text(json.dumps(bets, ensure_ascii=False, indent=2))
     print(f"\nTotal marcados: {total_picked}")

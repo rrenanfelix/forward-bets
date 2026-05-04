@@ -161,7 +161,7 @@
 <header>
   <div class="header-top">
     <div>
-      <h1>📊 Forward Backtest — Top 10 por dia</h1>
+      <h1>📊 Forward Backtest — Picks por dia</h1>
       <div class="meta" id="updated">—</div>
     </div>
   </div>
@@ -245,8 +245,8 @@ function getViewBets() {
 
 function viewTitle() {
   if (currentTab === "all") return "Todas as entradas";
-  if (currentTab === "acc") return "Acumulado — todas as Top 10";
-  return "Top do dia — " + fmtDayLabel(currentTab);
+  if (currentTab === "acc") return "Acumulado — todas as picks";
+  return "Picks do dia — " + fmtDayLabel(currentTab);
 }
 
 function render() {
@@ -346,7 +346,7 @@ function daysHtml() {
     </div>`;
   }).join("");
   return `<div class="panel">
-    <h2>📅 Histórico diário (Top 10)</h2>
+    <h2>📅 Histórico diário (Picks)</h2>
     <div class="day-grid">${cards}</div>
   </div>`;
 }

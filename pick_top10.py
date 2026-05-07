@@ -29,8 +29,8 @@ def passes_filter(b):
 
 def score(b):
     return (
-        b["prob_hist"] * 100 * 0.55
-        + b["ev_teorico"] * 100 * 0.30
+        b["prob_hist"] * 100 * 0.70
+        + b["ev_teorico"] * 100 * 0.15
         + (1.0 / b["odd_entry"]) * 100 * 0.15
     )
 

@@ -65,17 +65,26 @@ def main():
             continue  # jogos passados sem resolução ainda — não força top10
         by_day[d].append(b)
 
-    # 3) Pra cada dia, marca TODAS que passaram filtro (sem cap)
-    print(f"{'Dia':<12s} {'selecionadas':>13s}")
-    print("-" * 30)
+    # 3) Pra cada dia, marca passantes do filtro com diversificação:
+    #    - Máximo 1 pick por (liga, mercado) — evita concentrar 6 draws da Serie B IT
+    print(f"{'Dia':<12s} {'candidatos':>11s} {'selecionadas':>13s}")
+    print("-" * 45)
     total_picked = 0
     for d in sorted(by_day):
-        chosen = sorted(by_day[d], key=score, reverse=True)
+        cands = sorted(by_day[d], key=score, reverse=True)
+        seen_keys = set()
+        chosen = []
+        for b in cands:
+            key = (b["league_id"], b["market"])
+            if key in seen_keys:
+                continue
+            seen_keys.add(key)
+            chosen.append(b)
         for b in chosen:
             b["is_top10"] = True
             b["top10_day"] = d
         total_picked += len(chosen)
-        print(f"{d:<12s} {len(chosen):>13d}")
+        print(f"{d:<12s} {len(cands):>11d} {len(chosen):>13d}")
 
     BETS_FILE.write_text(json.dumps(bets, ensure_ascii=False, indent=2))
     print(f"\nTotal marcados: {total_picked}")

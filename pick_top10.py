@@ -45,10 +45,14 @@ def main():
     bets = json.loads(BETS_FILE.read_text())
     today_utc = datetime.now(timezone.utc).date().isoformat()
 
-    # 1) Limpa marcações de DIAS futuros/hoje cujas entradas ainda não foram resolvidas.
-    # Preserva entradas já resolvidas (won/lost) com sua marcação histórica.
+    # 1) Limpa marcações pendentes de hoje/futuros — re-seleciona com odds atualizadas.
+    # Preserva: (a) entradas já resolvidas (won/lost) e (b) entradas marcadas em dias passados
+    # (mesmo se ainda estiverem pending — evita perder picks que ainda não foram resolvidas).
     for b in bets:
         if b["status"] in ("won", "lost"):
+            continue
+        prev_day = b.get("top10_day")
+        if prev_day and prev_day < today_utc:
             continue
         b["is_top10"] = False
         b["top10_day"] = None

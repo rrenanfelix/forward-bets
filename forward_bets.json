@@ -9390,8 +9390,8 @@
     "pnl": null,
     "created_at": "2026-05-12T10:17:29.114620+00:00",
     "resolved_at": null,
-    "is_top10": false,
-    "top10_day": null
+    "is_top10": true,
+    "top10_day": "2026-05-14"
   },
   {
     "id": "1490294_away",
@@ -9456,8 +9456,8 @@
     "pnl": null,
     "created_at": "2026-05-12T10:17:37.698692+00:00",
     "resolved_at": null,
-    "is_top10": false,
-    "top10_day": null
+    "is_top10": true,
+    "top10_day": "2026-05-14"
   },
   {
     "id": "1379330_home",
@@ -9588,8 +9588,8 @@
     "pnl": null,
     "created_at": "2026-05-13T10:08:59.465075+00:00",
     "resolved_at": null,
-    "is_top10": false,
-    "top10_day": null
+    "is_top10": true,
+    "top10_day": "2026-05-15"
   },
   {
     "id": "1392200_away",
@@ -9632,8 +9632,8 @@
     "pnl": null,
     "created_at": "2026-05-13T10:09:08.504041+00:00",
     "resolved_at": null,
-    "is_top10": false,
-    "top10_day": null
+    "is_top10": true,
+    "top10_day": "2026-05-15"
   },
   {
     "id": "1394736_home",
@@ -9720,8 +9720,8 @@
     "pnl": null,
     "created_at": "2026-05-13T10:09:30.655569+00:00",
     "resolved_at": null,
-    "is_top10": false,
-    "top10_day": null
+    "is_top10": true,
+    "top10_day": "2026-05-15"
   },
   {
     "id": "1380674_home",
@@ -9741,6 +9741,72 @@
     "outcome": null,
     "pnl": null,
     "created_at": "2026-05-13T10:09:30.932685+00:00",
+    "resolved_at": null,
+    "is_top10": false,
+    "top10_day": null
+  },
+  {
+    "id": "1544972_away",
+    "fixture_id": 1544972,
+    "league_id": 61,
+    "league_name": "Ligue 1 (France)",
+    "kickoff_utc": "2026-05-15T18:30:00+00:00",
+    "home": "Saint Etienne",
+    "away": "Rodez",
+    "market": "away",
+    "prob_hist": 0.3107,
+    "odd_entry": 4.375,
+    "ev_teorico": 0.3593,
+    "status": "pending",
+    "result_home": null,
+    "result_away": null,
+    "outcome": null,
+    "pnl": null,
+    "created_at": "2026-05-14T09:43:18.698773+00:00",
+    "resolved_at": null,
+    "is_top10": false,
+    "top10_day": null
+  },
+  {
+    "id": "1394736_draw",
+    "fixture_id": 1394736,
+    "league_id": 203,
+    "league_name": "Süper Lig (Turkey)",
+    "kickoff_utc": "2026-05-15T17:00:00+00:00",
+    "home": "Rizespor",
+    "away": "Beşiktaş",
+    "market": "draw",
+    "prob_hist": 0.262,
+    "odd_entry": 4.025,
+    "ev_teorico": 0.0546,
+    "status": "pending",
+    "result_home": null,
+    "result_away": null,
+    "outcome": null,
+    "pnl": null,
+    "created_at": "2026-05-14T09:43:22.689158+00:00",
+    "resolved_at": null,
+    "is_top10": false,
+    "top10_day": null
+  },
+  {
+    "id": "1544662_away",
+    "fixture_id": 1544662,
+    "league_id": 179,
+    "league_name": "Premiership (Scotland)",
+    "kickoff_utc": "2026-05-15T18:45:00+00:00",
+    "home": "Partick",
+    "away": "Dunfermline",
+    "market": "away",
+    "prob_hist": 0.2986,
+    "odd_entry": 4.15,
+    "ev_teorico": 0.2392,
+    "status": "pending",
+    "result_home": null,
+    "result_away": null,
+    "outcome": null,
+    "pnl": null,
+    "created_at": "2026-05-14T09:43:27.287855+00:00",
     "resolved_at": null,
     "is_top10": false,
     "top10_day": null

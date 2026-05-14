@@ -2,14 +2,16 @@ name: Forward Backtest Pipeline
 
 on:
   schedule:
-    # 22:00 BRT = 01:00 UTC (próximo dia) — collect + pick_top10
+    # 22:00 BRT = 01:00 UTC (próximo dia) — collect + pick_top10 + notify picks
     - cron: '0 1 * * *'
-    # 03:00 BRT = 06:00 UTC — resolve
-    - cron: '0 6 * * *'
+    # 12:00 BRT = 15:00 UTC — resolve + notify parcial do dia
+    - cron: '0 15 * * *'
+    # 02:00 BRT = 05:00 UTC — resolve + notify resultados finais do dia anterior
+    - cron: '0 5 * * *'
   workflow_dispatch:
     inputs:
       mode:
-        description: 'Modo (collect, pick, resolve, all)'
+        description: 'Modo'
         required: true
         default: 'all'
         type: choice
@@ -17,6 +19,8 @@ on:
           - collect
           - pick
           - resolve
+          - partial
+          - results
           - all
 
 permissions:
@@ -39,40 +43,47 @@ jobs:
         id: mode
         run: |
           if [ "${{ github.event_name }}" = "schedule" ]; then
-            if [ "${{ github.event.schedule }}" = "0 1 * * *" ]; then
-              echo "mode=collect_pick" >> $GITHUB_OUTPUT
-            else
-              echo "mode=resolve" >> $GITHUB_OUTPUT
-            fi
+            case "${{ github.event.schedule }}" in
+              "0 1 * * *")  echo "mode=collect_pick_notify" >> $GITHUB_OUTPUT ;;
+              "0 15 * * *") echo "mode=resolve_partial" >> $GITHUB_OUTPUT ;;
+              "0 5 * * *")  echo "mode=resolve_results" >> $GITHUB_OUTPUT ;;
+            esac
           else
             echo "mode=${{ github.event.inputs.mode }}" >> $GITHUB_OUTPUT
           fi
 
       - name: Run collect
-        if: steps.mode.outputs.mode == 'collect_pick' || steps.mode.outputs.mode == 'collect' || steps.mode.outputs.mode == 'all'
+        if: contains(steps.mode.outputs.mode, 'collect') || steps.mode.outputs.mode == 'all'
         env:
           API_FOOTBALL_KEY: ${{ secrets.API_FOOTBALL_KEY }}
         run: python forward_pipeline.py collect
 
       - name: Run pick_top10
-        if: steps.mode.outputs.mode == 'collect_pick' || steps.mode.outputs.mode == 'pick' || steps.mode.outputs.mode == 'all'
+        if: contains(steps.mode.outputs.mode, 'pick') || steps.mode.outputs.mode == 'all'
         run: python pick_top10.py
 
       - name: Run resolve
-        if: steps.mode.outputs.mode == 'resolve' || steps.mode.outputs.mode == 'all'
+        if: contains(steps.mode.outputs.mode, 'resolve') || steps.mode.outputs.mode == 'results' || steps.mode.outputs.mode == 'partial' || steps.mode.outputs.mode == 'all'
         env:
           API_FOOTBALL_KEY: ${{ secrets.API_FOOTBALL_KEY }}
         run: python forward_pipeline.py resolve
 
       - name: Notify Telegram (picks)
-        if: steps.mode.outputs.mode == 'collect_pick' || steps.mode.outputs.mode == 'pick' || steps.mode.outputs.mode == 'all'
+        if: contains(steps.mode.outputs.mode, 'notify') || steps.mode.outputs.mode == 'all'
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
         run: python notify_telegram.py picks
 
-      - name: Notify Telegram (results)
-        if: steps.mode.outputs.mode == 'resolve'
+      - name: Notify Telegram (parcial)
+        if: contains(steps.mode.outputs.mode, 'partial')
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: python notify_telegram.py partial
+
+      - name: Notify Telegram (resultados)
+        if: contains(steps.mode.outputs.mode, 'results')
         env:
           TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}

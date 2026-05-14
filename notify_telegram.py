@@ -132,13 +132,63 @@ def results_message():
     return "\n".join(out)
 
 
+def partial_message():
+    """Parcial do DIA ATUAL (BRT) — jogos do dia que já resolveram + pendentes."""
+    bets = json.loads(BETS_FILE.read_text())
+    today_brt = (datetime.now(timezone.utc) - timedelta(hours=3)).date().isoformat()
+
+    picks = [b for b in bets if b.get("top10_day") == today_brt]
+    if not picks:
+        return None
+    picks.sort(key=lambda b: b["kickoff_utc"])
+    settled = [b for b in picks if b["status"] in ("won", "lost")]
+    pending = [b for b in picks if b["status"] == "pending"]
+
+    date_label = datetime.fromisoformat(today_brt).strftime("%d/%m (%a)")
+    out = [f"<b>⏱️ Parcial {date_label}</b>\n"]
+
+    if settled:
+        out.append("<b>Resolvidos até agora:</b>")
+        for b in settled:
+            h, a = b.get("result_home", "?"), b.get("result_away", "?")
+            m = STAKE * (b["odd_entry"] - 1) if b["status"] == "won" else -STAKE
+            sym = "✅" if b["status"] == "won" else "❌"
+            out.append(
+                f"{sym} {b['home']} {h}×{a} {b['away']}\n"
+                f"   {b['market'].upper()} @ {b['odd_entry']:.2f} → <b>{fmt_money(m)}</b>"
+            )
+        won = sum(1 for b in settled if b["status"] == "won")
+        pnl = sum(STAKE * (b["odd_entry"] - 1) if b["status"] == "won" else -STAKE for b in settled)
+        out.append(
+            f"\n<b>Parcial dia</b>\n"
+            f"   {len(settled)}/{len(picks)} | hit {100*won/len(settled):.1f}% | {fmt_money(pnl)}"
+        )
+
+    if pending:
+        out.append(f"\n<b>Pendentes ({len(pending)}):</b>")
+        for b in pending:
+            ko = datetime.fromisoformat(b["kickoff_utc"].replace("Z", "+00:00")) - timedelta(hours=3)
+            t = ko.strftime("%H:%M")
+            out.append(
+                f"⏳ <b>{t}</b> {b['home']} × {b['away']}\n"
+                f"   {b['market'].upper()} @ {b['odd_entry']:.2f}"
+            )
+
+    return "\n".join(out)
+
+
 def main():
     if len(sys.argv) < 2:
-        print("Uso: notify_telegram.py picks|results")
+        print("Uso: notify_telegram.py picks|partial|results")
         sys.exit(1)
     mode = sys.argv[1]
     if mode == "picks":
         msg = picks_message()
+    elif mode == "partial":
+        msg = partial_message()
+        if not msg:
+            print("Sem picks pro dia atual.")
+            return
     elif mode == "results":
         msg = results_message()
         if not msg:

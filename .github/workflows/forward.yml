@@ -1,27 +1,13 @@
 name: Forward Backtest Pipeline
 
 on:
-  schedule:
-    # 22:00 BRT = 01:00 UTC (próximo dia) — collect + pick_top10 + notify picks
-    - cron: '0 1 * * *'
-    # 12:00 BRT = 15:00 UTC — resolve + notify parcial do dia
-    - cron: '0 15 * * *'
-    # 02:00 BRT = 05:00 UTC — resolve + notify resultados finais do dia anterior
-    - cron: '0 5 * * *'
   workflow_dispatch:
     inputs:
       mode:
-        description: 'Modo'
+        description: 'Modo: collect_pick_notify | resolve_partial | resolve_results | collect | pick | resolve | all'
         required: true
         default: 'all'
-        type: choice
-        options:
-          - collect
-          - pick
-          - resolve
-          - partial
-          - results
-          - all
+        type: string
 
 permissions:
   contents: write
@@ -39,18 +25,9 @@ jobs:
       - name: Install dependencies
         run: pip install requests
 
-      - name: Determine mode
+      - name: Mode
         id: mode
-        run: |
-          if [ "${{ github.event_name }}" = "schedule" ]; then
-            case "${{ github.event.schedule }}" in
-              "0 1 * * *")  echo "mode=collect_pick_notify" >> $GITHUB_OUTPUT ;;
-              "0 15 * * *") echo "mode=resolve_partial" >> $GITHUB_OUTPUT ;;
-              "0 5 * * *")  echo "mode=resolve_results" >> $GITHUB_OUTPUT ;;
-            esac
-          else
-            echo "mode=${{ github.event.inputs.mode }}" >> $GITHUB_OUTPUT
-          fi
+        run: echo "mode=${{ github.event.inputs.mode }}" >> $GITHUB_OUTPUT
 
       - name: Run collect
         if: contains(steps.mode.outputs.mode, 'collect') || steps.mode.outputs.mode == 'all'
@@ -63,7 +40,7 @@ jobs:
         run: python pick_top10.py
 
       - name: Run resolve
-        if: contains(steps.mode.outputs.mode, 'resolve') || steps.mode.outputs.mode == 'results' || steps.mode.outputs.mode == 'partial' || steps.mode.outputs.mode == 'all'
+        if: contains(steps.mode.outputs.mode, 'resolve') || steps.mode.outputs.mode == 'all'
         env:
           API_FOOTBALL_KEY: ${{ secrets.API_FOOTBALL_KEY }}
         run: python forward_pipeline.py resolve

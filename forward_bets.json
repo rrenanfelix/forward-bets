@@ -9810,5 +9810,27 @@
     "resolved_at": null,
     "is_top10": false,
     "top10_day": null
+  },
+  {
+    "id": "1391174_away",
+    "fixture_id": 1391174,
+    "league_id": 140,
+    "league_name": "La Liga (Spain)",
+    "kickoff_utc": "2026-05-14T18:00:00+00:00",
+    "home": "Girona",
+    "away": "Real Sociedad",
+    "market": "away",
+    "prob_hist": 0.2839,
+    "odd_entry": 3.75,
+    "ev_teorico": 0.0646,
+    "status": "pending",
+    "result_home": null,
+    "result_away": null,
+    "outcome": null,
+    "pnl": null,
+    "created_at": "2026-05-14T14:33:31.109406+00:00",
+    "resolved_at": null,
+    "is_top10": false,
+    "top10_day": null
   }
 ]

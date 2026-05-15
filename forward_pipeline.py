@@ -25,7 +25,7 @@ BETS_FILE = ROOT / "forward_bets.json"
 API_BASE = "https://v3.football.api-sports.io"
 MATCH_WINNER_BET_ID = 1
 RATE_DELAY = 0.15
-LOOKAHEAD_DAYS = 1
+LOOKAHEAD_DAYS = int(os.environ.get("LOOKAHEAD_DAYS", "1"))
 
 
 def api_key():

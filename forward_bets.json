@@ -4213,13 +4213,13 @@
     "prob_hist": 0.429,
     "odd_entry": 2.75,
     "ev_teorico": 0.1798,
-    "status": "pending",
-    "result_home": null,
-    "result_away": null,
-    "outcome": null,
-    "pnl": null,
+    "status": "lost",
+    "result_home": 0,
+    "result_away": 2,
+    "outcome": "away",
+    "pnl": -1.0,
     "created_at": "2026-05-07T10:09:28.493649+00:00",
-    "resolved_at": null,
+    "resolved_at": "2026-05-15T03:58:13.354647+00:00",
     "is_top10": true,
     "top10_day": "2026-05-09"
   },
@@ -6553,7 +6553,7 @@
     "created_at": "2026-05-08T07:02:02.362607+00:00",
     "resolved_at": "2026-05-10T10:44:49.272459+00:00",
     "is_top10": true,
-    "top10_day": "2026-05-10"
+    "top10_day": "2026-05-09"
   },
   {
     "id": "1520678_away",
@@ -6773,7 +6773,7 @@
     "created_at": "2026-05-08T07:02:12.064786+00:00",
     "resolved_at": "2026-05-10T10:44:51.511551+00:00",
     "is_top10": true,
-    "top10_day": "2026-05-10"
+    "top10_day": "2026-05-09"
   },
   {
     "id": "1490277_draw",
@@ -7653,7 +7653,7 @@
     "created_at": "2026-05-09T07:27:48.097158+00:00",
     "resolved_at": "2026-05-11T16:18:39.596557+00:00",
     "is_top10": true,
-    "top10_day": "2026-05-11"
+    "top10_day": "2026-05-10"
   },
   {
     "id": "1544183_away",
@@ -9163,13 +9163,13 @@
     "prob_hist": 0.2517,
     "odd_entry": 6.25,
     "ev_teorico": 0.5731,
-    "status": "pending",
-    "result_home": null,
-    "result_away": null,
-    "outcome": null,
-    "pnl": null,
+    "status": "lost",
+    "result_home": 2,
+    "result_away": 0,
+    "outcome": "home",
+    "pnl": -1.0,
     "created_at": "2026-05-12T10:17:05.511178+00:00",
-    "resolved_at": null,
+    "resolved_at": "2026-05-15T03:58:13.732740+00:00",
     "is_top10": false,
     "top10_day": null
   },
@@ -9185,13 +9185,13 @@
     "prob_hist": 0.2839,
     "odd_entry": 10.875,
     "ev_teorico": 2.0874,
-    "status": "pending",
-    "result_home": null,
-    "result_away": null,
-    "outcome": null,
-    "pnl": null,
+    "status": "lost",
+    "result_home": 2,
+    "result_away": 0,
+    "outcome": "home",
+    "pnl": -1.0,
     "created_at": "2026-05-12T10:17:05.511209+00:00",
-    "resolved_at": null,
+    "resolved_at": "2026-05-15T03:58:13.732814+00:00",
     "is_top10": false,
     "top10_day": null
   },
@@ -9391,7 +9391,7 @@
     "created_at": "2026-05-12T10:17:29.114620+00:00",
     "resolved_at": "2026-05-14T11:30:15.134440+00:00",
     "is_top10": true,
-    "top10_day": "2026-05-14"
+    "top10_day": "2026-05-13"
   },
   {
     "id": "1490294_away",
@@ -9449,13 +9449,13 @@
     "prob_hist": 0.4439,
     "odd_entry": 2.42,
     "ev_teorico": 0.0742,
-    "status": "pending",
-    "result_home": null,
-    "result_away": null,
-    "outcome": null,
-    "pnl": null,
+    "status": "lost",
+    "result_home": 1,
+    "result_away": 3,
+    "outcome": "away",
+    "pnl": -1.0,
     "created_at": "2026-05-12T10:17:37.698692+00:00",
-    "resolved_at": null,
+    "resolved_at": "2026-05-15T03:58:14.119279+00:00",
     "is_top10": true,
     "top10_day": "2026-05-14"
   },
@@ -9823,13 +9823,13 @@
     "prob_hist": 0.2839,
     "odd_entry": 3.75,
     "ev_teorico": 0.0646,
-    "status": "pending",
-    "result_home": null,
-    "result_away": null,
-    "outcome": null,
-    "pnl": null,
+    "status": "lost",
+    "result_home": 1,
+    "result_away": 1,
+    "outcome": "draw",
+    "pnl": -1.0,
     "created_at": "2026-05-14T14:33:31.109406+00:00",
-    "resolved_at": null,
+    "resolved_at": "2026-05-15T03:58:18.442816+00:00",
     "is_top10": false,
     "top10_day": null
   }

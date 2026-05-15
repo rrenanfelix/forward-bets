@@ -9,7 +9,7 @@ Entradas já resolvidas (won/lost) são preservadas - não re-seleciona o passad
 """
 import json
 from collections import defaultdict
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 ROOT = Path(__file__).parent
@@ -36,9 +36,12 @@ def score(b):
 
 
 def kickoff_day(iso: str) -> str:
+    """Retorna a data BRT (UTC-3) do kickoff, não a UTC."""
     if not iso:
         return ""
-    return iso[:10]
+    dt_utc = datetime.fromisoformat(iso.replace("Z", "+00:00"))
+    dt_brt = dt_utc - timedelta(hours=3)
+    return dt_brt.date().isoformat()
 
 
 def main():

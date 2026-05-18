@@ -163,6 +163,7 @@
 
 <script>
 const STORAGE_KEY = "minhas_apostas_v1";
+const MIN_DAY = "2026-05-18"; // só mostra picks a partir dessa data
 let allBets = [];
 let userData = {};
 
@@ -217,7 +218,7 @@ async function load() {
 }
 
 function render() {
-  const picks = allBets.filter(b => b.is_top10);
+  const picks = allBets.filter(b => b.is_top10 && b.top10_day >= MIN_DAY);
   if (!picks.length) {
     document.getElementById("main").innerHTML = `<div class="empty">Sem picks selecionados.</div>`;
     return;
@@ -348,7 +349,7 @@ function attachHandlers() {
 }
 
 document.getElementById("export-csv").addEventListener("click", () => {
-  const picks = allBets.filter(b => b.is_top10);
+  const picks = allBets.filter(b => b.is_top10 && b.top10_day >= MIN_DAY);
   const lines = ["dia,kickoff,liga,casa,visitante,mercado,odd_reco,apostei,odd_real,stake_real,status,placar,pnl_real"];
   picks.forEach(p => {
     const ud = getUd(p.id);

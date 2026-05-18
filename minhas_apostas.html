@@ -1,0 +1,384 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+<meta charset="utf-8" />
+<title>Minhas Apostas — Forward Backtest</title>
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<style>
+  :root {
+    --bg: #0e1117;
+    --panel: #161b22;
+    --panel-2: #1c222b;
+    --border: #2d333b;
+    --txt: #e6edf3;
+    --muted: #8b949e;
+    --accent: #58a6ff;
+    --green: #3fb950;
+    --red: #f85149;
+    --amber: #d29922;
+    --gold: #ffb454;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--txt);
+  }
+  header {
+    padding: 18px 32px;
+    border-bottom: 1px solid var(--border);
+    background: var(--panel);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  header h1 { margin: 0; font-size: 18px; font-weight: 600; }
+  header .meta { font-size: 12px; color: var(--muted); }
+  header .actions { display: flex; gap: 8px; }
+  header button {
+    background: var(--panel-2);
+    color: var(--txt);
+    border: 1px solid var(--border);
+    padding: 8px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 13px;
+    font-family: inherit;
+  }
+  header button:hover { background: var(--accent); color: #0e1117; }
+  header a {
+    color: var(--accent);
+    text-decoration: none;
+    font-size: 13px;
+    padding: 8px 14px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+  }
+  main { padding: 24px 32px; max-width: 1600px; margin: 0 auto; }
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+  .kpi {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px;
+  }
+  .kpi .label { font-size: 11px; text-transform: uppercase; color: var(--muted); letter-spacing: .5px; }
+  .kpi .value { font-size: 22px; font-weight: 600; margin-top: 6px; font-variant-numeric: tabular-nums; }
+  .kpi .sub { font-size: 12px; color: var(--muted); margin-top: 2px; }
+  .v-pos { color: var(--green); }
+  .v-neg { color: var(--red); }
+
+  .panel {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px 20px;
+    margin-bottom: 20px;
+  }
+  .panel h2 {
+    margin: 0 0 14px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: .5px;
+  }
+
+  table { width: 100%; border-collapse: collapse; font-size: 13px; }
+  thead th {
+    text-align: left;
+    padding: 10px 8px;
+    border-bottom: 1px solid var(--border);
+    font-weight: 500;
+    color: var(--muted);
+    font-size: 11px;
+    text-transform: uppercase;
+  }
+  tbody tr { border-bottom: 1px solid var(--panel-2); }
+  tbody tr.bet-on { background: rgba(88, 166, 255, 0.05); }
+  tbody td { padding: 8px; }
+  td.num { text-align: right; font-variant-numeric: tabular-nums; }
+
+  input[type="checkbox"] { width: 18px; height: 18px; cursor: pointer; }
+  input[type="number"] {
+    background: var(--panel-2);
+    color: var(--txt);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 4px 6px;
+    width: 80px;
+    font-family: inherit;
+    font-size: 13px;
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+  }
+  input[type="number"]:focus { border-color: var(--accent); outline: none; }
+
+  .pill { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 11px; font-weight: 500; }
+  .pill-pending { background: #21262d; color: var(--muted); }
+  .pill-won { background: rgba(63,185,80,.15); color: var(--green); }
+  .pill-lost { background: rgba(248,81,73,.15); color: var(--red); }
+
+  .filters { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
+  .filters select {
+    background: var(--panel-2);
+    color: var(--txt);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 6px 10px;
+    font-size: 13px;
+    font-family: inherit;
+  }
+  .empty { text-align: center; padding: 30px; color: var(--muted); font-size: 13px; }
+  .error { background: rgba(248,81,73,.1); border: 1px solid var(--red); padding: 12px 16px; border-radius: 8px; color: var(--red); }
+  code { background: var(--panel-2); padding: 1px 6px; border-radius: 4px; font-size: 12px; }
+
+  @media (max-width: 800px) {
+    table { font-size: 11px; }
+    input[type="number"] { width: 60px; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <h1>💰 Minhas Apostas</h1>
+    <div class="meta" id="updated">—</div>
+  </div>
+  <div class="actions">
+    <a href="forward_dashboard.html">← Dashboard</a>
+    <button id="export-csv">Exportar CSV</button>
+    <button id="reset-data" title="Apaga TODOS os dados que você preencheu">Resetar</button>
+  </div>
+</header>
+<main id="main"><div class="empty">Carregando...</div></main>
+
+<script>
+const STORAGE_KEY = "minhas_apostas_v1";
+let allBets = [];
+let userData = {};
+
+const fmtMoney = n => (n >= 0 ? "+" : "") + "R$ " + n.toFixed(2).replace(".", ",");
+const fmtMoneyPlain = n => "R$ " + n.toFixed(2).replace(".", ",");
+const fmtPct = n => (n >= 0 ? "+" : "") + (100*n).toFixed(1) + "%";
+const fmtDate = iso => {
+  if (!iso) return "—";
+  const d = new Date(iso);
+  return d.toLocaleString("pt-BR", { day: "2-digit", month: "2-digit", hour: "2-digit", minute: "2-digit" });
+};
+const cls = n => n == null ? "" : (n > 0 ? "v-pos" : n < 0 ? "v-neg" : "");
+
+function loadUserData() {
+  try { userData = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}"); }
+  catch { userData = {}; }
+}
+function saveUserData() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(userData));
+}
+function getUd(id) {
+  return userData[id] || { apostou: false, odd_real: null, stake_real: null };
+}
+function setUd(id, patch) {
+  userData[id] = { ...getUd(id), ...patch };
+  saveUserData();
+}
+
+function realPnl(bet) {
+  const ud = getUd(bet.id);
+  if (!ud.apostou || !ud.stake_real || !ud.odd_real) return 0;
+  if (bet.status === "won") return ud.stake_real * (ud.odd_real - 1);
+  if (bet.status === "lost") return -ud.stake_real;
+  return 0;
+}
+
+async function load() {
+  loadUserData();
+  try {
+    const res = await fetch("forward_bets.json?_=" + Date.now());
+    if (!res.ok) throw new Error(res.statusText);
+    allBets = await res.json();
+  } catch (e) {
+    document.getElementById("main").innerHTML = `<div class="error">
+      Não consegui carregar <code>forward_bets.json</code>. Sirva com <code>python3 -m http.server 8765</code> e abra
+      <code>http://localhost:8765/minhas_apostas.html</code><br><small>(${e.message})</small></div>`;
+    return;
+  }
+  document.getElementById("updated").textContent =
+    "atualizado " + new Date().toLocaleString("pt-BR");
+  render();
+}
+
+function render() {
+  const picks = allBets.filter(b => b.is_top10);
+  if (!picks.length) {
+    document.getElementById("main").innerHTML = `<div class="empty">Sem picks selecionados.</div>`;
+    return;
+  }
+
+  // Stats reais (só as que você apostou)
+  const myBets = picks.filter(b => getUd(b.id).apostou);
+  const settled = myBets.filter(b => b.status === "won" || b.status === "lost");
+  const won = settled.filter(b => b.status === "won").length;
+  const lost = settled.filter(b => b.status === "lost").length;
+  const pnlReal = settled.reduce((s, b) => s + realPnl(b), 0);
+  const stakeReal = settled.reduce((s, b) => s + (getUd(b.id).stake_real || 0), 0);
+  const roi = stakeReal ? pnlReal / stakeReal : 0;
+  const stakePlannedPending = myBets.filter(b => b.status === "pending")
+    .reduce((s, b) => s + (getUd(b.id).stake_real || 0), 0);
+
+  const kpis = `
+    <div class="kpi-grid">
+      <div class="kpi">
+        <div class="label">Apostei em</div>
+        <div class="value">${myBets.length}</div>
+        <div class="sub">de ${picks.length} picks selecionados</div>
+      </div>
+      <div class="kpi">
+        <div class="label">Apostado total</div>
+        <div class="value">${fmtMoneyPlain(stakeReal + stakePlannedPending)}</div>
+        <div class="sub">${fmtMoneyPlain(stakeReal)} resolvidos · ${fmtMoneyPlain(stakePlannedPending)} pendentes</div>
+      </div>
+      <div class="kpi">
+        <div class="label">Hit rate real</div>
+        <div class="value">${settled.length ? (100*won/settled.length).toFixed(1)+"%" : "—"}</div>
+        <div class="sub">${won} W / ${lost} L (${settled.length} resolvidas)</div>
+      </div>
+      <div class="kpi">
+        <div class="label">Lucro / Prejuízo REAL</div>
+        <div class="value ${cls(pnlReal)}">${settled.length ? fmtMoney(pnlReal) : "—"}</div>
+        <div class="sub">com odds e stakes reais</div>
+      </div>
+      <div class="kpi">
+        <div class="label">ROI real</div>
+        <div class="value ${cls(pnlReal)}">${settled.length && stakeReal ? fmtPct(roi) : "—"}</div>
+        <div class="sub">retorno sobre apostado</div>
+      </div>
+    </div>`;
+
+  // Agrupado por dia
+  const byDay = {};
+  picks.forEach(p => {
+    const d = p.top10_day || "—";
+    (byDay[d] = byDay[d] || []).push(p);
+  });
+  const days = Object.keys(byDay).sort();
+
+  const tables = days.map(d => {
+    const dayPicks = byDay[d].sort((a,b) => (a.kickoff_utc||"").localeCompare(b.kickoff_utc||""));
+    const dt = new Date(d + "T12:00:00");
+    const label = dt.toLocaleDateString("pt-BR", { weekday: "long", day: "2-digit", month: "2-digit" });
+
+    const dayStake = dayPicks.filter(p => getUd(p.id).apostou).reduce((s,p)=>s+(getUd(p.id).stake_real||0),0);
+    const dayPnl = dayPicks.filter(p => getUd(p.id).apostou && p.status !== "pending").reduce((s,p)=>s+realPnl(p),0);
+
+    const rows = dayPicks.map(p => {
+      const ud = getUd(p.id);
+      const m = realPnl(p);
+      const pillCls = "pill pill-" + p.status;
+      const pillTxt = p.status === "pending" ? "PEND" : p.status === "won" ? "WON" : "LOST";
+      const result = p.outcome ? `${p.result_home}x${p.result_away}` : "—";
+      return `<tr class="${ud.apostou ? "bet-on" : ""}" data-id="${p.id}">
+        <td><input type="checkbox" class="ck-apostou" ${ud.apostou ? "checked" : ""}/></td>
+        <td>${fmtDate(p.kickoff_utc)}</td>
+        <td>${p.league_name}</td>
+        <td>${p.home} <span style="color:var(--muted)">vs</span> ${p.away}</td>
+        <td>${p.market}</td>
+        <td class="num">${p.odd_entry.toFixed(2)}</td>
+        <td class="num"><input type="number" class="in-odd" step="0.01" min="1" value="${ud.odd_real ?? ""}" placeholder="${p.odd_entry.toFixed(2)}"/></td>
+        <td class="num"><input type="number" class="in-stake" step="1" min="0" value="${ud.stake_real ?? ""}" placeholder="100"/></td>
+        <td><span class="${pillCls}">${pillTxt}</span> ${result}</td>
+        <td class="num ${cls(m)}">${ud.apostou && p.status !== "pending" ? fmtMoney(m) : "—"}</td>
+      </tr>`;
+    }).join("");
+
+    return `<div class="panel">
+      <h2>📅 ${label} — ${dayPicks.length} picks · apostado ${fmtMoneyPlain(dayStake)} · P&L ${dayPnl !== 0 ? fmtMoney(dayPnl) : "—"}</h2>
+      <div style="overflow-x:auto;"><table>
+        <thead><tr>
+          <th>Apostei?</th>
+          <th>Kickoff</th>
+          <th>Liga</th>
+          <th>Jogo</th>
+          <th>Mercado</th>
+          <th class="num">Odd Reco.</th>
+          <th class="num">Odd Real</th>
+          <th class="num">Stake Real</th>
+          <th>Status</th>
+          <th class="num">P&L</th>
+        </tr></thead>
+        <tbody>${rows}</tbody>
+      </table></div>
+    </div>`;
+  }).join("");
+
+  document.getElementById("main").innerHTML = kpis + tables;
+  attachHandlers();
+}
+
+function attachHandlers() {
+  document.querySelectorAll("tr[data-id]").forEach(tr => {
+    const id = tr.dataset.id;
+    const ckApostou = tr.querySelector(".ck-apostou");
+    const inOdd = tr.querySelector(".in-odd");
+    const inStake = tr.querySelector(".in-stake");
+
+    ckApostou.addEventListener("change", () => {
+      setUd(id, { apostou: ckApostou.checked });
+      render();
+    });
+    inOdd.addEventListener("change", () => {
+      const v = parseFloat(inOdd.value);
+      setUd(id, { odd_real: isNaN(v) ? null : v });
+      render();
+    });
+    inStake.addEventListener("change", () => {
+      const v = parseFloat(inStake.value);
+      setUd(id, { stake_real: isNaN(v) ? null : v });
+      render();
+    });
+  });
+}
+
+document.getElementById("export-csv").addEventListener("click", () => {
+  const picks = allBets.filter(b => b.is_top10);
+  const lines = ["dia,kickoff,liga,casa,visitante,mercado,odd_reco,apostei,odd_real,stake_real,status,placar,pnl_real"];
+  picks.forEach(p => {
+    const ud = getUd(p.id);
+    const m = realPnl(p);
+    const placar = p.outcome ? `${p.result_home}x${p.result_away}` : "";
+    lines.push([
+      p.top10_day, p.kickoff_utc, p.league_name, p.home, p.away, p.market,
+      p.odd_entry, ud.apostou ? "sim" : "nao",
+      ud.odd_real ?? "", ud.stake_real ?? "",
+      p.status, placar, ud.apostou && p.status !== "pending" ? m.toFixed(2) : ""
+    ].map(v => `"${(v??"").toString().replace(/"/g,'""')}"`).join(","));
+  });
+  const blob = new Blob([lines.join("\n")], { type: "text/csv;charset=utf-8;" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `minhas_apostas_${new Date().toISOString().slice(0,10)}.csv`;
+  a.click();
+});
+
+document.getElementById("reset-data").addEventListener("click", () => {
+  if (confirm("Apagar TODOS os dados preenchidos (odd real, stake, marcações)? Não dá pra desfazer.")) {
+    userData = {};
+    saveUserData();
+    render();
+  }
+});
+
+load();
+setInterval(load, 60_000);
+</script>
+</body>
+</html>

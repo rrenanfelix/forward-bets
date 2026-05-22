@@ -155,8 +155,11 @@
   </div>
   <div class="actions">
     <a href="forward_dashboard.html">← Dashboard</a>
-    <button id="export-csv">Exportar CSV</button>
+    <button id="backup-json" title="Baixa um arquivo com suas marcações (backup/migração)">⬇ Backup</button>
+    <button id="restore-json" title="Carrega marcações de um arquivo de backup">⬆ Restaurar</button>
+    <button id="export-csv">CSV</button>
     <button id="reset-data" title="Apaga TODOS os dados que você preencheu">Resetar</button>
+    <input type="file" id="restore-file" accept=".json" style="display:none"/>
   </div>
 </header>
 <main id="main"><div class="empty">Carregando...</div></main>
@@ -368,6 +371,39 @@ document.getElementById("export-csv").addEventListener("click", () => {
   a.href = url;
   a.download = `minhas_apostas_${new Date().toISOString().slice(0,10)}.csv`;
   a.click();
+});
+
+document.getElementById("backup-json").addEventListener("click", () => {
+  const blob = new Blob([JSON.stringify(userData, null, 2)], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `minhas_apostas_backup_${new Date().toISOString().slice(0,10)}.json`;
+  a.click();
+});
+
+document.getElementById("restore-json").addEventListener("click", () => {
+  document.getElementById("restore-file").click();
+});
+document.getElementById("restore-file").addEventListener("change", (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    try {
+      const data = JSON.parse(reader.result);
+      const count = Object.keys(data).length;
+      if (confirm(`Restaurar ${count} marcações? Isso vai MESCLAR com o que já existe (sobrescreve ids iguais).`)) {
+        userData = { ...userData, ...data };
+        saveUserData();
+        render();
+        alert("Restaurado com sucesso!");
+      }
+    } catch (err) {
+      alert("Arquivo inválido: " + err.message);
+    }
+  };
+  reader.readAsText(file);
 });
 
 document.getElementById("reset-data").addEventListener("click", () => {

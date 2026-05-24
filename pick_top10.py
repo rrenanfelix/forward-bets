@@ -26,21 +26,9 @@ LIMITS = {
 }
 
 
-# Ter(1)/Qua(2)/Qui(3) = mata-mata europeu (Champions/Europa) = mismatch.
-# Backtest: cortar esses dias sobe ROI de +21% pra +28%.
-EXCLUDE_WEEKDAYS = {1, 2, 3}
-
-
 def passes_filter(b):
     omin, omax, evmax = LIMITS[b["market"]]
     return omin <= b["odd_entry"] <= omax and b["ev_teorico"] <= evmax
-
-
-def is_excluded_weekday(day_str):
-    try:
-        return datetime.strptime(day_str, "%Y-%m-%d").weekday() in EXCLUDE_WEEKDAYS
-    except ValueError:
-        return False
 
 
 def score(b):
@@ -86,8 +74,6 @@ def main():
         d = kickoff_day(b["kickoff_utc"])
         if d < today_utc:
             continue  # jogos passados sem resolução ainda — não força top10
-        if is_excluded_weekday(d):
-            continue  # ter/qua/qui = mismatch europeu, ROI ruim
         by_day[d].append(b)
 
     # 3) Pra cada dia, marca passantes do filtro com diversificação:

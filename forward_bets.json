@@ -16166,8 +16166,8 @@
     "pnl": null,
     "created_at": "2026-05-22T21:13:28.355595+00:00",
     "resolved_at": null,
-    "is_top10": true,
-    "top10_day": "2026-05-24"
+    "is_top10": false,
+    "top10_day": null
   },
   {
     "id": "1379343_away",
@@ -16298,8 +16298,8 @@
     "pnl": null,
     "created_at": "2026-05-22T21:13:30.794895+00:00",
     "resolved_at": null,
-    "is_top10": true,
-    "top10_day": "2026-05-24"
+    "is_top10": false,
+    "top10_day": null
   },
   {
     "id": "1379341_home",
@@ -16738,8 +16738,8 @@
     "pnl": null,
     "created_at": "2026-05-22T21:13:50.912262+00:00",
     "resolved_at": null,
-    "is_top10": false,
-    "top10_day": null
+    "is_top10": true,
+    "top10_day": "2026-05-24"
   },
   {
     "id": "1378240_draw",
@@ -16760,8 +16760,8 @@
     "pnl": null,
     "created_at": "2026-05-22T21:13:51.387348+00:00",
     "resolved_at": null,
-    "is_top10": true,
-    "top10_day": "2026-05-24"
+    "is_top10": false,
+    "top10_day": null
   },
   {
     "id": "1378240_away",
@@ -17002,8 +17002,8 @@
     "pnl": null,
     "created_at": "2026-05-22T21:13:56.940866+00:00",
     "resolved_at": null,
-    "is_top10": false,
-    "top10_day": null
+    "is_top10": true,
+    "top10_day": "2026-05-24"
   },
   {
     "id": "1546052_draw",
@@ -17024,8 +17024,8 @@
     "pnl": null,
     "created_at": "2026-05-22T21:14:06.599970+00:00",
     "resolved_at": null,
-    "is_top10": true,
-    "top10_day": "2026-05-24"
+    "is_top10": false,
+    "top10_day": null
   },
   {
     "id": "1546052_away",
@@ -17156,8 +17156,8 @@
     "pnl": null,
     "created_at": "2026-05-22T21:14:11.113895+00:00",
     "resolved_at": null,
-    "is_top10": true,
-    "top10_day": "2026-05-24"
+    "is_top10": false,
+    "top10_day": null
   },
   {
     "id": "1537006_away",

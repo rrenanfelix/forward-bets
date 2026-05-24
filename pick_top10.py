@@ -15,20 +15,16 @@ from pathlib import Path
 ROOT = Path(__file__).parent
 BETS_FILE = ROOT / "forward_bets.json"
 
-# Faixas otimizadas por backtest (ROI histórico):
-#   home 2.30-2.60 = +25.6% | draw 3.00-4.00 = +60% | away 3.00-3.60 = +51.6%
-#   CORTADO: home >= 2.60 (era -24.9% ROI, buraco negro do mandante meia-boca)
-# (odd_min, odd_max, ev_max)
 LIMITS = {
-    "home": (2.20, 2.60, 0.25),
-    "draw": (3.00, 4.20, 0.30),
-    "away": (3.00, 3.70, 0.30),
+    "home": (2.80, 0.25),
+    "draw": (4.00, 0.25),
+    "away": (3.50, 0.25),
 }
 
 
 def passes_filter(b):
-    omin, omax, evmax = LIMITS[b["market"]]
-    return omin <= b["odd_entry"] <= omax and b["ev_teorico"] <= evmax
+    omax, evmax = LIMITS[b["market"]]
+    return b["odd_entry"] <= omax and b["ev_teorico"] <= evmax
 
 
 def score(b):
